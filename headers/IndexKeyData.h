@@ -1,10 +1,11 @@
-#ifndef INDEXKEYDATA_H
-#define INDEXKEYDATA_H
+#pragma once
 
 #include <chrono>
 #include <iostream>
 #include <fstream>
 #include <string>
+
+#include "Cask.h"
 
 using std::istream;
 using std::ofstream;
@@ -18,13 +19,13 @@ using std::chrono::system_clock;
 struct IndexKeyData
 {
     size_t keySize;
-    std::string key;
+    Cask key;
     size_t fileNameSize;
     std::string fileName;
     size_t offSet;
 
     IndexKeyData(
-        const std::string &key,
+        const Cask &key,
         const std::string &fileName,
         const size_t offSet)
         : keySize(key.size()), fileNameSize(fileName.size()), key(key), fileName(fileName), offSet(offSet) {}
@@ -44,7 +45,7 @@ struct IndexKeyData
         fs.write(reinterpret_cast<const char *>(&ikd.fileNameSize), sizeof(ikd.fileNameSize));
         fs.write(reinterpret_cast<const char *>(&ikd.offSet), sizeof(ikd.offSet));
 
-        fs.write(ikd.key.c_str(), ikd.keySize);
+        fs.write(ikd.key.dataPtr(), ikd.keySize);
         fs.write(ikd.fileName.c_str(), ikd.fileNameSize);
 
         return fs;
@@ -62,11 +63,12 @@ struct IndexKeyData
         is.read(reinterpret_cast<char *>(&ikd.fileNameSize), sizeof(ikd.fileNameSize));
         is.read(reinterpret_cast<char *>(&ikd.offSet), sizeof(ikd.offSet));
 
-        std::string key(ikd.keySize, '\0');
+        Cask keyCask(new char[ikd.keySize], ikd.keySize);
+        is.read(keyCask.dataPtr(), ikd.keySize);
+        ikd.key = keyCask;
+
         std::string fileName(ikd.fileNameSize, '\0');
-        is.read(&key[0], ikd.keySize);
         is.read(&fileName[0], ikd.fileNameSize);
-        ikd.key = key;
         ikd.fileName = fileName;
 
         return is;
@@ -82,10 +84,8 @@ struct IndexKeyData
             ikd.fileName == this->fileName);
     }
 
-    auto getSize() const -> size_t
+    auto size() const -> size_t
     {
         return sizeof(keySize) + sizeof(fileNameSize) + sizeof(offSet) + keySize + fileNameSize;
     }
 };
-
-#endif // INDEXKEYDATA_H

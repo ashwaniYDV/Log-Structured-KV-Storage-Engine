@@ -7,7 +7,6 @@ set(CMAKE_CXX_STANDARD 17)
 # Add the source files
 set(SOURCES
     src/main.cpp
-    src/KeyValueStore.cpp
 )
 
 # Add the header files

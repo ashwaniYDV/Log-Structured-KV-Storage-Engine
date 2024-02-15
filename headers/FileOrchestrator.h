@@ -1,5 +1,4 @@
-#ifndef FILEORCHESTRATOR_H
-#define FILEORCHESTRATOR_H
+#pragma once
 
 #include <unordered_map>
 #include <string>
@@ -126,7 +125,7 @@ struct FileOrchestrator
         return activeStream;
     }
 
-    void saveIndex(std::unordered_map<std::string, std::pair<std::string, size_t>>& offsetMap) {
+    void saveIndex(std::unordered_map<Cask, std::pair<std::string, size_t>, Cask::HashFunction>& offsetMap) {
         std::ofstream file(getIndexFilePath(), std::ios::binary | std::ios::trunc);
         if (!file.is_open())
         {
@@ -147,7 +146,7 @@ struct FileOrchestrator
         std::cout << "Index saved to " << getIndexFilePath() << std::endl;
     }
 
-    void loadIndex(std::unordered_map<std::string, std::pair<std::string, size_t>>& offsetMap)
+    void loadIndex(std::unordered_map<Cask, std::pair<std::string, size_t>, Cask::HashFunction>& offsetMap)
     {
         std::ifstream file(getIndexFilePath(), std::ios::binary);
         if (!file.is_open())
@@ -176,11 +175,9 @@ struct FileOrchestrator
         return 0;
     }
 
-    void checkIfNewChunkNeeded(size_t dataPacketSize) {
-        if (getActiveStreamSize() + dataPacketSize > THRESHOLD_FILE_SIZE) {
+    void checkIfNewChunkNeeded(size_t recordSize) {
+        if (getActiveStreamSize() + recordSize > THRESHOLD_FILE_SIZE) {
             createNewChunk();
         }
     }
 };
-
-#endif // FILEORCHESTRATOR_H

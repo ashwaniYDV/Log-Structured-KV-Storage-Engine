@@ -23,7 +23,7 @@ int main() {
             std::string key;
             cin >> key;
             cout << "Enter value: ";
-            std::string value;
+            string value;
             cin >> value;
             kvStore.put(key, value);
         } else if (choice == 3) {
