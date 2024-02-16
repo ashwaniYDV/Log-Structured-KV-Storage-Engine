@@ -89,14 +89,13 @@ struct Cask {
     }
 
     friend auto operator<<(ostream &os, const Cask &sl) -> ostream& {
-        // if (sl.len == sizeof(int)) {
-        //     os << *(int*)(sl.data);
-        // } else if (sl.len == sizeof(double)) {
-        //     os << *(double*)(sl.data);
-        // } else {
-        //     os.write(sl.dataPtr(), sl.len);
-        // }
-        os.write(sl.dataPtr(), sl.len);
+        if (sl.len == sizeof(int)) {
+            os << *(int*)(sl.data);
+        } else if (sl.len == sizeof(double)) {
+            os << *(double*)(sl.data);
+        } else {
+            os.write(sl.dataPtr(), sl.len);
+        }
 
         return os;
     }
