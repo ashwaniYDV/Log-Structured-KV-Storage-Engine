@@ -1,6 +1,6 @@
 # Log-Structured-KV-Storage-Engine
 
-* Implemented a Log-Structured Key-Value Storage Engine in C++, drawing inspiration from databases like Bitcask, LevelDB, Google BigTable, RockDB, and Cassandra.
+* Implemented a Log-Structured Key-Value Storage Engine in C++, drawing inspiration from databases like Bitcask, LevelDB, RocskDB, etc.
 
 ## About
 * Lightning-fast writes by appending data directly to a binary file, optimizing write performance.
