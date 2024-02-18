@@ -15,28 +15,31 @@ struct Cask {
     bool isSelfAllocated;
     
     Cask(): data(0), len(0), isSelfAllocated(false) {};
+
     Cask(int &datum) : isSelfAllocated(true) {
         len = sizeof(int);
         data = new char[len];
         memcpy(data, &datum, len);
     }
+
     Cask(double &datum): isSelfAllocated(true) {
         len = sizeof(double);
         data = new char[len];
         memcpy(data, &datum, len);
     }
+
     Cask(string &s): isSelfAllocated(true) {
         len = s.size();
         data = new char[len];
         memcpy(data, s.data(), len);
     }
 
-    // Cask(int &datum): data(reinterpret_cast<char*>(&datum)), len(sizeof(int)), isSelfAllocated(false) {}
-    // Cask(double &datum): data(reinterpret_cast<char*>(&datum)), len(sizeof(double)), isSelfAllocated(false) {}
     Cask(char *ptr, int len): data(ptr), len(len), isSelfAllocated(true) {}
+    
     ~Cask() {
         delete data;
     }
+    
     auto operator=(const Cask& other) -> void {
         this->len = other.len;
         this->data = new char[this->len];
@@ -61,8 +64,8 @@ struct Cask {
     }
 
     struct HashFunction {
-        std::size_t operator()(const Cask& sl) const {
-            return sl.ComputeHash();
+        std::size_t operator()(const Cask& cask) const {
+            return cask.ComputeHash();
         }
     };
 
@@ -88,13 +91,15 @@ struct Cask {
         return !memcmp(key.dataPtr(), this->data, this->len);
     }
 
-    friend auto operator<<(ostream &os, const Cask &sl) -> ostream& {
-        if (sl.len == sizeof(int)) {
-            os << *(int*)(sl.data);
-        } else if (sl.len == sizeof(double)) {
-            os << *(double*)(sl.data);
+    friend auto operator<<(ostream &os, const Cask &cask) -> ostream& {
+        // ISSUE: if string itself is of 4 bytes, then this line will parse it as an int
+        // TODO: write a better parsing logic
+        if (cask.len == sizeof(int)) {
+            os << *(int*)(cask.data);
+        } else if (cask.len == sizeof(double)) {
+            os << *(double*)(cask.data);
         } else {
-            os.write(sl.dataPtr(), sl.len);
+            os.write(cask.dataPtr(), cask.len);
         }
 
         return os;
