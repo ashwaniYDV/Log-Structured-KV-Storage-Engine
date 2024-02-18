@@ -7,7 +7,7 @@
 * Reads are highly efficient, leveraging an in-memory index to store byte offsets of the latest records in the data file. 
 * It is fault-tolerant, persisting both data and index to the file system.
 * Supports crash recovery through "write-ahead logging," allowing the reconstruction of the index in case of system crashes during the persistence process.
-* Data is stored in multiple chunks for handling large data. 
+* Data is stored across multiple immutable files + one active/mutable file for handling large data. 
 
 ## TODO
 * Write a compaction algorithm (running in background) to merge older chunks and their indexes. (Since data file is append only, a key can be present in multiple files but its latest record will be in one of the latest files.)
