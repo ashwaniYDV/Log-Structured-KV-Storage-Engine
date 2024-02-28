@@ -59,8 +59,8 @@ struct Record {
     Record(
         const Cask &key,
         const Cask &value,
-        const RecordType &rType) : keySize(key.size()), valueSize(value.size()), recordType(rType), key(key), value(value)
-    {
+        const RecordType &rType) 
+        : keySize(key.size()), valueSize(value.size()), recordType(rType), key(key), value(value) {
         timestamp = system_clock::to_time_t(system_clock::now());
     }
 
@@ -97,21 +97,13 @@ struct Record {
         return fs;
     }
 
-    // friend auto operator<<(ostream &os, const Record &record) -> ostream &
-    // {
-    //     os << "{timestamp: " << record.timestamp << ", recordType: " << record.recordType << ", key: " << record.key << ", value: " << record.value << "}" << std::endl;
-    //     return os;
-    // }
-
-    friend auto operator<<(ostream& os, const Record& record) -> ostream&
-    {
+    friend auto operator<<(ostream& os, const Record& record) -> ostream& {
         os << "{timestamp: " << record.timestamp << ", recordType: " << record.recordType << ", key: " << record.key << ", value: " << record.value << ", checksum: "
            << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(record.checksum) << "}" << std::endl;
         return os;
     }
 
-    friend auto operator>>(istream &is, Record &record) -> istream &
-    {
+    friend auto operator>>(istream &is, Record &record) -> istream& {
         is.read(reinterpret_cast<char *>(&record.timestamp), sizeof(record.timestamp));
         is.read(reinterpret_cast<char *>(&record.keySize), sizeof(record.keySize));
         is.read(reinterpret_cast<char *>(&record.valueSize), sizeof(record.valueSize));
@@ -134,17 +126,13 @@ struct Record {
         recordCopy.calculateChecksum();
 
         if (record.checksum != recordCopy.checksum) {
-            // Handle checksum mismatch here (throw an exception, return an error, etc.)
-            // For simplicity, we'll print a message to std::cerr and clear the record
             std::cerr << "Checksum mismatch. Record is corrupted." << std::endl;
-            record = Record(); // Reset record to a default state
         }
 
         return is;
     }
 
-    auto operator==(const Record &record) const -> bool
-    {
+    auto operator==(const Record &record) const -> bool {
         return (
             record.recordType == this->recordType and
             record.timestamp == this->timestamp and
@@ -154,8 +142,7 @@ struct Record {
             record.value == this->value);
     }
 
-    auto size() const -> size_t
-    {
+    auto size() const -> size_t {
         return sizeof(time_t) + sizeof(keySize) + sizeof(valueSize) + sizeof(RecordType) + keySize + valueSize;
     }
 };
