@@ -25,7 +25,7 @@ struct Engine {
 
     void write(Cask &key, Cask &value)
     {
-        Record record(key, value, PacketType::UPDATE);
+        Record record(key, value, RecordType::UPDATE);
 
         orchestrator.checkIfNewChunkNeeded(record.size());
 
@@ -63,7 +63,7 @@ struct Engine {
     void remove(Cask &key)
     {
         auto value = Cask();
-        Record record(key, value, PacketType::DELETE);
+        Record record(key, value, RecordType::DELETE);
 
         orchestrator.checkIfNewChunkNeeded(record.size());
 
